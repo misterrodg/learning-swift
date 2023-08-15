@@ -7,26 +7,31 @@
 
 import Foundation
 
-func factorial(number: Int) -> Int {
+func factorial(number: Int64) -> Int64 {
     if number < 0 {
         return -1;
     }
     if number == 0 {
         return 1;
     } else {
-        return number * factorial(number: number - 1)
+        let result = number.multipliedReportingOverflow(by: factorial(number: number - 1));
+        if !result.overflow {
+            return result.partialValue
+        } else {
+            return -2;
+        }
     }
 }
 
-print("Enter a number: ", terminator: "")
+print("Enter a number: ", terminator: "");
 if let input = readLine() {
-    if let number = Int(input) {
-        let result = factorial(number: number)
-        print("You entered: \(number)")
-        if result == -1 {
-            print("Negative factorials are undefined.")
-        } else {
-            print("Its factorial is: \(result)")
+    if let number = Int64(input) {
+        print("You entered: \(number)");
+        let result = factorial(number: number);
+        switch result {
+        case -1: print("Negative factorials are undefined.")
+        case -2: print("The factorial of \(number) is too large to calculate.")
+        default: print("Its factorial is: \(result)")
         }
     }
 }
